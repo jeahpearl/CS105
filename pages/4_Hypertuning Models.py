@@ -153,7 +153,7 @@ def main():
     data = preprocess_data(data)
 
     st.subheader("Data Preview")
-    st.write(data.head())
+    st.write(data)
 
     # Sidebar configuration
     st.sidebar.subheader("Hyperparameter Tuning Configuration")

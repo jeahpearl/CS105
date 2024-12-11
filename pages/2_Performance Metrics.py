@@ -234,15 +234,21 @@ def main():
 
     dataframe = load_data()
     st.subheader("Dataset Preview (Before Cleaning)")
-    st.write(dataframe.head())
+    st.write(dataframe)
 
     dataframe = clean_data(dataframe)
     st.subheader("Dataset Preview (After Cleaning)")
-    st.write(dataframe.head())
+    with st.expander("***Dataset Preview (After Cleaning)***"):
+        st.dataframe(st.session_state.cleaned_data)
 
     dataframe = preprocess_data(dataframe)
     st.subheader("Dataset Preview (After Preprocessing)")
-    st.write(dataframe.head())
+    with st.expander('**Dataset Preview (After Preprocessing)**'):
+        st.dataframe(dataframe)
+    st.write("")
+    st.write("")
+    st.write("")
+    st.write("")
 
     # Evaluate the model with dynamic test size
     model, results, log_loss_values, matrix, report, X_test, Y_test, num_folds, true_labels, predicted_probs = evaluate_model(dataframe, method, algorithm, test_size)

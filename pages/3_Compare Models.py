@@ -168,7 +168,7 @@ def main():
     data = preprocess_data(data)
 
     st.subheader("Data Preview")
-    st.write(data.head())
+    st.write(data)
 
     # Class distribution for validation
     class_counts = data['LUNG_CANCER'].value_counts()

@@ -71,14 +71,14 @@ st.write('Data Name:', file_path.split('\\')[-1])
 
 # Sidebar for model selection
 model_type = st.sidebar.selectbox(
-    'Select Classifier',
+    'Select Algorithm',
     ('Decision Tree', 'Gaussian Naive Bayes', 'AdaBoost Classifier', 'K-Nearest Neighbors Classifier',
      'MLP Classifier', 'Perceptron Classifier', 'Random Forest', 'Support Vector Machine (SVM)')
 )
 
-# Sidebar for cross-validation selection
+# Sidebar for validation selection
 cv_type = st.sidebar.selectbox(
-    'Select Cross-Validation Method',
+    'Select Validation Method',
     ('Train/Test Split', 'K-Fold Cross-Validation')
 )
 
@@ -115,17 +115,19 @@ with col2:
 
 # Display original or refreshed data preview
 st.subheader('Original or Refreshed Data Preview')
-st.write(st.session_state.original_data.head())
+st.write(st.session_state.original_data)
+
 
 # Display cleaned data preview only if cleaned data was processed
 if 'cleaned_data_display' in st.session_state and st.session_state.cleaned_data_display:
-    st.subheader('Cleaned Data Preview')
-    st.write(st.session_state.cleaned_data.head())
+    with st.expander('**Cleaned Data Preview**'):
+        st.dataframe(st.session_state.cleaned_data)
+
 
 # Preprocessed data
-st.subheader('Preprocessed Data Preview')
-preprocessed_data = preprocess_data(st.session_state.cleaned_data.copy())
-st.write(preprocessed_data.head())
+with st.expander('**Preprocessed Cleaned Data Preview**'):
+    st.dataframe(preprocess_data(st.session_state.cleaned_data.copy()))
+
 
 # Sidebar layout for Train Model and Save Model buttons
 col3, col4 = st.sidebar.columns(2)
@@ -189,7 +191,7 @@ with col3:
 if 'trained_model' in st.session_state and hasattr(st.session_state.trained_model, 'estimators_'):
     st.write(f"Model is ready with {len(st.session_state.trained_model.estimators_)} estimators.")
 else:
-    st.write("Model is not ready or the model type does not use estimators.")
+    st.write("") #Model is not ready or the model type does not use estimators.
 
 # Display training results if available in session state
 if st.session_state.trained_model:
