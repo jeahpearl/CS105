@@ -249,11 +249,13 @@ def main():
                 col1, col2 = st.columns(2)
 
                 with col1:
-                    st.subheader("Results for Model 1")
+                    st.subheader(f"Results for Model 1")
+                    st.write(f"Sampling Technique: {sampling_method1}")
                     st.write(pd.DataFrame(sorted_results1))
 
                 with col2:
-                    st.subheader("Results for Model 2")
+                    st.subheader(f"Results for Model 2")
+                    st.write(f"Sampling Technique: {sampling_method2}")
                     st.write(pd.DataFrame(sorted_results2))
 
 if __name__ == "__main__":

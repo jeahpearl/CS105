@@ -67,8 +67,11 @@ def get_model_and_params(name):
             {'var_smoothing': np.logspace(-9, -3, 7)}
         ),
         "Perceptron Classifier": (
-            CalibratedClassifierCV(Perceptron(), method='sigmoid', cv=3),
-            {'base_estimator__penalty': ['l2', 'l1', 'elasticnet'], 'base_estimator__alpha': [0.0001, 0.001, 0.01]}
+                    CalibratedClassifierCV(Perceptron(), method='sigmoid', cv=3),
+                    {
+                        'estimator__penalty': ['l2', 'l1', 'elasticnet'],  # Corrected prefix
+                        'estimator__alpha': [0.0001, 0.001, 0.01]           # Corrected prefix
+                    }
         )
     }
     return models_and_params.get(name)
@@ -183,32 +186,6 @@ def main():
     # K-Fold Cross Validation
     elif sampling_method == "K-Fold Cross Validation":
         num_folds = st.sidebar.slider("Number of Folds", 2, 20, 5)
-
-    # Perform hyperparameter tuning
-    if st.sidebar.button("Suggest Best Model"):
-        if sampling_method == "Select" or tuning_method == "Select":
-            st.sidebar.error("Please select both a sampling technique and a tuning method.")
-        else:
-            with st.spinner("Finding the best model..."):
-                best_model_name, best_model, best_accuracy = suggest_best_model(
-                    data, sampling_method, tuning_method,
-                    test_size=test_size, num_folds=num_folds
-                )
-
-            if best_model_name:
-                st.session_state.trained_model = best_model
-                st.session_state.model_accuracy = best_accuracy
-                st.session_state.model_type = best_model_name
-                st.session_state.cv_type = sampling_method
-                st.session_state.tuning_method = tuning_method
-                st.session_state.model_saved = False
-
-                # Display the suggested best model
-                st.subheader("Suggested Best Model")
-                st.write(f"Best Model: {best_model_name}")
-                st.write(f"Best Accuracy: {best_accuracy * 100:.2f}%")
-                st.write(f"Cross-Validation Type: {sampling_method}")
-                st.write(f"Tuning Method: {tuning_method}")
                 
                 
     # Perform hyperparameter tuning

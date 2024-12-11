@@ -117,17 +117,17 @@ with col2:
 st.subheader('Original or Refreshed Data Preview')
 st.write(st.session_state.original_data)
 
-
 # Display cleaned data preview only if cleaned data was processed
 if 'cleaned_data_display' in st.session_state and st.session_state.cleaned_data_display:
-    with st.expander('**Cleaned Data Preview**'):
-        st.dataframe(st.session_state.cleaned_data)
-
+    st.subheader('Cleaned Data Preview')
+    with st.expander('***Cleaned Data Preview***'):
+        st.write(st.session_state.cleaned_data)
 
 # Preprocessed data
-with st.expander('**Preprocessed Cleaned Data Preview**'):
-    st.dataframe(preprocess_data(st.session_state.cleaned_data.copy()))
-
+st.subheader('Preprocessed Data Preview')
+preprocessed_data = preprocess_data(st.session_state.cleaned_data.copy())
+with st.expander('***Preprocessed Data Preview***'):
+    st.write(preprocessed_data)
 
 # Sidebar layout for Train Model and Save Model buttons
 col3, col4 = st.sidebar.columns(2)
@@ -224,5 +224,4 @@ with col4:
             pickle.dump(st.session_state.trained_model, f)
         
         st.sidebar.success(f"Model saved as `{model_file}`!")
-
 

@@ -65,7 +65,8 @@ if 'LUNG_CANCER' not in df.columns:
     st.stop()
 
 # Preview the dataset
-with st.expander("Data Preview"):
+st.subheader("Lung Cancer Dataset")
+with st.expander("**Data Preview**"):
     st.dataframe(df)
 
 #######################################
