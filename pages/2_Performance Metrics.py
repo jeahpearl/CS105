@@ -13,6 +13,7 @@ from sklearn.metrics import (
     classification_report, confusion_matrix, ConfusionMatrixDisplay,
     log_loss, roc_auc_score, roc_curve
 )
+
 import matplotlib.pyplot as plt
 from sklearn.calibration import CalibratedClassifierCV
 
@@ -25,12 +26,14 @@ def load_data():
 
 # Function to clean the dataset
 def clean_data(data):
+
     # Drop rows with blank or missing values across all columns
     data = data.dropna(subset=data.columns)
     return data
 
 # Preprocessing function with mapping logic
 def preprocess_data(data):
+
     # Map GENDER to 1 (M) and 0 (F)
     data['GENDER'] = data['GENDER'].map({'M': 1, 'F': 0})
     data['LUNG_CANCER'] = data['LUNG_CANCER'].map({'YES': 1, 'NO': 0})
@@ -60,16 +63,13 @@ def calculate_log_loss(model, X, Y, cv_method):
     for train_index, test_index in cv_method.split(X, Y):
         X_train, X_test = X[train_index], X[test_index]
         Y_train, Y_test = Y[train_index], Y[test_index]
-
         model.fit(X_train, Y_train)
         Y_prob = model.predict_proba(X_test)[:, 1]
-
         if len(np.unique(Y_test)) > 1:
             fold_log_loss = log_loss(Y_test, Y_prob)
             log_loss_values.append(fold_log_loss)
         else:
             log_loss_values.append(np.nan)
-
     log_loss_values = [loss for loss in log_loss_values if not np.isnan(loss)]
     return log_loss_values
 
@@ -85,7 +85,6 @@ def evaluate_model(dataframe, method, algorithm, test_size):
     report = {}
     true_labels = []
     predicted_probs = []
-
     if method == "Train/Test Split":
         X_train, X_test, Y_train, Y_test = train_test_split(X, Y, test_size=test_size, random_state=42)
         model.fit(X_train, Y_train)
@@ -99,7 +98,6 @@ def evaluate_model(dataframe, method, algorithm, test_size):
         y_pred = model.predict(X_test)
         matrix = confusion_matrix(Y_test, y_pred)
         report = classification_report(Y_test, y_pred, output_dict=True)
-
     elif method == "K-Fold Cross Validation":
         num_folds = st.sidebar.slider("Number of Folds (K-Fold):", 2, 20, 10)
         cv_method = KFold(n_splits=num_folds, shuffle=True, random_state=42)
@@ -145,10 +143,10 @@ def display_metrics(model, results, log_loss_values, matrix, report, method, X_t
     display_conf_matrix = st.sidebar.checkbox("Show Confusion Matrix", value=True)
     display_class_report = st.sidebar.checkbox("Show Classification Report", value=True)
     display_roc = st.sidebar.checkbox("Show ROC Curve", value=True)
-
     if display_accuracy:
         st.subheader("Classification Accuracy")
         st.write(f"Accuracy: {np.mean(results) * 100:.2f}% ± {np.std(results) * 100:.2f}%")
+
         # Plotting a boxplot for accuracy results
         fig, ax = plt.subplots()
         ax.boxplot(results, patch_artist=True)
@@ -158,12 +156,12 @@ def display_metrics(model, results, log_loss_values, matrix, report, method, X_t
     else:
         st.subheader("Classification Accuracy")
         st.error("Accuracy cannot be determined. No results are available.")
-
     if display_log_loss and log_loss_values:
         st.subheader("Log Loss")
         average_log_loss = np.mean(log_loss_values)
         stdev_log_loss = np.std(log_loss_values)
         st.write(f"Mean Log Loss: {average_log_loss:.3f} ± {stdev_log_loss:.3f}")
+
         # Plotting a line graph for log loss values
         fig, ax = plt.subplots()
         ax.plot(log_loss_values, label='Log Loss per Fold', marker='o', linestyle='-')
@@ -176,7 +174,6 @@ def display_metrics(model, results, log_loss_values, matrix, report, method, X_t
     else:
         st.subheader("Log Loss")
         st.error("Log Loss cannot be determined. No results are available.")
-
     if display_conf_matrix:
         st.subheader("Confusion Matrix")
         fig, ax = plt.subplots()
@@ -199,7 +196,6 @@ def display_metrics(model, results, log_loss_values, matrix, report, method, X_t
     else:
         st.subheader("Classification Report")
         st.error("Classification Report cannot be determined. No results are available.")
-
     if display_roc and true_labels and predicted_probs:
         st.subheader("ROC AUC and Curve")
         fpr, tpr, _ = roc_curve(true_labels, predicted_probs)
@@ -231,24 +227,21 @@ def main():
         test_size = 0.2  # Default value or calculate as needed for other methods
     
     st.title("Classification Performance Metrics")
-
     dataframe = load_data()
-    st.subheader("Dataset Preview (Before Cleaning)")
-    st.write(dataframe)
+    
+    st.subheader("Dataset Preview")
+    with st.expander('***Dataset Preview***'):
+        st.write(dataframe)
 
     dataframe = clean_data(dataframe)
     st.subheader("Dataset Preview (After Cleaning)")
-    with st.expander("***Dataset Preview (After Cleaning)***"):
-        st.dataframe(st.session_state.cleaned_data)
+    with st.expander('***Dataset Preview (After Cleaning)***'):
+        st.write(dataframe)
 
     dataframe = preprocess_data(dataframe)
     st.subheader("Dataset Preview (After Preprocessing)")
-    with st.expander('**Dataset Preview (After Preprocessing)**'):
-        st.dataframe(dataframe)
-    st.write("")
-    st.write("")
-    st.write("")
-    st.write("")
+    with st.expander('***Dataset Preview (After Preprocessing)***'):
+        st.write(dataframe)
 
     # Evaluate the model with dynamic test size
     model, results, log_loss_values, matrix, report, X_test, Y_test, num_folds, true_labels, predicted_probs = evaluate_model(dataframe, method, algorithm, test_size)
@@ -256,4 +249,3 @@ def main():
 
 if __name__ == "__main__":
     main()
-

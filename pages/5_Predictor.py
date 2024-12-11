@@ -99,6 +99,8 @@ def main():
                 else:
                     st.success("Prediction: Low likelihood of lung cancer.")
 
+                if probability is not None:
+                    st.write(f"Prediction Confidence: {probability * 100:.2f}%")
         else:
             st.error("Failed to load the model. Please upload a valid .pkl file.")
 

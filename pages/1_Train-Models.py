@@ -13,6 +13,8 @@ from sklearn.linear_model import Perceptron
 from sklearn.svm import SVC
 import re
 
+st.set_page_config(page_title="Classification Train Model", page_icon=":bar_chart:", layout="wide")
+
 def sanitize_filename(value):
     """Replace invalid characters in a filename with underscores."""
     return re.sub(r'[\\/*?:"<>|]', '_', value)
